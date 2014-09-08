@@ -54,45 +54,6 @@ char text[arraysize];
 char varname[arraysize];
 byte server[4] = {192,168,0,65};
 
-/*
-int newsetpoint(String args){
-    char argarr[args.length() + 1];
-    strncpy(argarr,args.c_str(),args.length());
-    argarr[args.length()] = 0x00;
-    double temp = atof(argarr);
-    if (temp > 0 && temp < 500){
-        p.reset_setpoint(temp);
-        web_sp = temp;
-        return 0;
-    } else {
-        return -1;
-    }
-}
-
-int retune(String args){
-    char argarr[args.length() + 1];
-    strncpy(argarr,args.c_str(),args.length());
-    argarr[args.length()] = 0x00;
-    int fieldn = 1;
-    double kp,ki,kd;
-    char * param = strtok(argarr, ",");
-    while (fieldn <= 4 and param != NULL) {
-        //get the values for 
-        if (fieldn == 1) {  // value for 1st param
-           kp = atof(param);
-        } else if (fieldn == 2) {  // value for 3rd param (skip 2nd)
-           ki = atof(param);
-        } else if (fieldn == 3) {   // value for 4th
-           kd = atof(param);
-        }
-        fieldn++;
-        param = strtok(NULL, ",");
-    }    
-    p.retune(kp, ki, kd);
-    return 0;
-}
-*/
-
 void sendpulse(int pin, float microseconds) {
     digitalWrite(pin,HIGH);
     delayMicroseconds(microseconds);
@@ -108,9 +69,6 @@ void setup() {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV128);
     SPI.setDataMode(SPI_MODE3);
-
-//    Spark.function("newsetpoint", newsetpoint);
-//    Spark.function("retune", retune);
     
     pinMode(A0,INPUT);
     pinMode(A1,INPUT);
@@ -128,7 +86,6 @@ void setup() {
     adc.reset();
     delay(2);
     adc.oneshotread(AD7194_AIN5,AD7194_AIN6,32,true,false);
-    //adc.init();
     adc.calibrate();
 }
 
@@ -141,13 +98,6 @@ double steinhart(double thermistor_r){
 }
 
 void loop() {
-    /*
-    if (Spark.connected() == false){
-        Spark.connect();
-        while(Spark.connected() == false);
-    }
-    Spark.process();
-    */
     if (loopcount++ % 120 == 0){
         adc.reset();
         delay(10);
@@ -193,9 +143,7 @@ void loop() {
     } else {
         thermistor_temp2 = -273.15;
     }
-    //tv = tr/(tr+rr) * vsup;
-    //vsup/tr = 1 + rr/tr
-    //tr = rr/(vsup/tr - 1)
+#
 #ifdef SERIAL_DEBUG    
     Serial.println("Reading external ADC...");
 #endif
@@ -220,8 +168,6 @@ void loop() {
     tc_temperature2 = tc_temp(coldjunction,tc_voltage2);
 
     output_f = p.update(tc_temperature);
-    //integral = p.calculate_integral();
-    //diff = p.calculate_rate();
     
     output = (output * 224 + round((output_f) * 255.0/100.0) * 32) >> 8;
 
@@ -255,14 +201,6 @@ void loop() {
     web_ki = p.get_ki();
     web_kd = p.get_kd();
 
-    // Process, there's some indication this may flush some buffers on the wifi chip, maybe this will help?
-    /*
-    if (Spark.connected() == false){
-        Spark.connect();
-        while(Spark.connected() == false);
-    } 
-    Spark.process();
-    */
 #ifdef SERIAL_DEBUG    
     Serial.println("Connecting to server...");
 #endif
@@ -270,7 +208,6 @@ void loop() {
     TCPClient dbserver;
 
     if (dbserver.connect("webserver.ad.overeducated.com", 9500)){
-    //if (dbserver.connect(server, 9500)){
         float value;
         bool receivingvalues = true;
         int numrec = 0;
