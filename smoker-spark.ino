@@ -85,6 +85,7 @@ void setup() {
 
     adc.reset();
     delay(2);
+    adc.init();
     adc.oneshotread(AD7194_AIN5,AD7194_AIN6,32,true,false);
     adc.calibrate();
 }
