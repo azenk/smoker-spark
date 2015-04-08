@@ -1,4 +1,5 @@
 #include "pid-control.h"
+#include <stdlib.h>
 
 PID::PID(int mode_in,double setpoint_in,double Kp_in, double Ki_in = 0.0, double Kd_in = 0.0){
     mode = mode_in;
@@ -26,13 +27,19 @@ double PID::get_kd(){
 }
 
 void PID::reset_setpoint(double new_setpoint){
+    err_i = 0.0;
     setpoint = new_setpoint;
 }
 
 double PID::update(double process_value){
     double err = setpoint - process_value;
-    update_history(err);
-    return mode * (Kp * err + Ki * calculate_integral() + Kd * calculate_rate());
+    current_sample = (current_sample + 1) % PID_HISTORY_SIZE;
+    err_hist[current_sample] = err;
+    double rate =  calculate_rate();
+    if (abs(err) < (100.0 / Kp)  && rate < 1.0) {
+			err_i = err_i + err;
+    }
+    return mode * (Kp * err + Ki * calculate_integral() + Kd * rate);
 }
 
 void PID::update_history(double err){
