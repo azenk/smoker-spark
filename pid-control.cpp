@@ -37,9 +37,11 @@ double PID::update(double process_value){
     err_hist[current_sample] = err;
     double rate =  calculate_rate();
     double integral = 0.0;
-    if (abs(err) < (100.0 / Kp)  && rate < 1.0) {
+    if (abs(err) < (100.0 / Kp)) {
 			err_i = err_i + err;
       integral = calculate_integral();
+    } else {
+      err_i = 0.0;
     }
     return mode * (Kp * err + Ki * integral + Kd * rate);
 }
