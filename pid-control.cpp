@@ -36,12 +36,10 @@ double PID::update(double process_value){
     current_sample = (current_sample + 1) % PID_HISTORY_SIZE;
     err_hist[current_sample] = err;
     double rate =  calculate_rate();
-    double integral = 0.0;
     if (abs(mode * (Kp * err + Ki * err_i + Kd * rate)) < 100) {
 			err_i = err_i + err;
-      integral = calculate_integral();
     } 
-    return mode * (Kp * err + Ki * integral + Kd * rate);
+    return mode * (Kp * err + Ki * err_i + Kd * rate);
 }
 
 void PID::update_history(double err){
