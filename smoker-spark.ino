@@ -13,6 +13,10 @@
 // This #include statement was automatically added by the Spark IDE.
 #include "thermocouple.h"
 
+#include "buildtime.h"
+
+constexpr unsigned long buildtime = BUILDTIME;
+
 // Setup for pushingbox notifactions
 //const char server[] = "api.pushingbox.com";
 //const char wood_url[] = "/pushingbox?devid=v3F721A007235DC9";  //replace with your devid
@@ -322,6 +326,9 @@ void loop() {
 
         float damper_pct_open = 100.0 * (14.105 - sin(damper_angle / 360.0 * 6.28) * 11.888) / 14.105;
         
+        snprintf(text,arraysize,"%s:%d","Build Time",buildtime);
+        dbserver.println(text);
+
         snprintf(text,arraysize,"%s:%d","VariablesRec",numrec);
         dbserver.println(text);
 
