@@ -34,7 +34,7 @@ void PID::reset_setpoint(double new_setpoint){
 double PID::update(double process_value){
     double err = setpoint - process_value;
     current_sample = (current_sample + 1) % PID_HISTORY_SIZE;
-    err_hist[current_sample] = err;
+    err_hist[current_sample] = process_value;
     double rate =  calculate_rate();
     if (abs(mode * (Kp * err + Ki * err_i + Kd * rate)) < 100) {
 			err_i = err_i + err;
