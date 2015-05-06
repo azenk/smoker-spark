@@ -24,14 +24,10 @@ class PID {
         void reset();
         double update(double);
         double calculate_rate();
-        double calculate_integral();
         void retune(double,double,double);
         double get_kp();
         double get_ki();
         double get_kd();
-        
-    private:
-        void update_history(double);
 };
 
 #define PID_MODE_HEAT 1.0

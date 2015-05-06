@@ -42,21 +42,6 @@ double PID::update(double process_value){
     return mode * (Kp * err + Ki * err_i + Kd * rate);
 }
 
-void PID::update_history(double err){
-    current_sample = (current_sample + 1) % PID_HISTORY_SIZE;
-    err_hist[current_sample] = err;
-    err_i = err_i + err;
-}
-
-double PID::calculate_integral(){
-    double integral = 0.0;
-    //for (int i = 0; i < i_samples ; i++){
-    //    integral = integral + err_hist[(current_sample + PID_HISTORY_SIZE - i) % PID_HISTORY_SIZE];
-    //}
-    integral = err_i;
-    return integral;
-}
-
 double PID::calculate_rate(){
     double rate = 0;
     double sum_x = 0;
