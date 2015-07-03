@@ -28,8 +28,12 @@ double coldjunction = 0.0;
 int _cj_accum = 0;
 double tc_temperature = 0.0;
 double tc_temperature2 = 0.0;
+double tc_temperature3 = 0.0;
+double tc_temperature4 = 0.0;
 double tc_voltage = 0.0;
 double tc_voltage2 = 0.0;
+double tc_voltage3 = 0.0;
+double tc_voltage4 = 0.0;
 double te_voltage = 0.0;
 
  
@@ -155,6 +159,8 @@ void loop() {
     digitalWrite(D7,HIGH);
     tc_voltage = adc.oneshotread(AD7194_AIN5,AD7194_AIN6,32,true,false);
     tc_voltage2 = adc.oneshotread(AD7194_AIN7,AD7194_AIN8,32,true,false);
+    tc_voltage3 = adc.oneshotread(AD7194_AIN9,AD7194_AIN10,32,true,false);
+    tc_voltage4 = adc.oneshotread(AD7194_AIN11,AD7194_AIN12,32,true,false);
     if (tc_voltage <= -500.0 || tc_voltage2 <= -500.0){
         adc.reset();
         delay(10);
@@ -171,6 +177,8 @@ void loop() {
     tc_temperature = tc_temp(coldjunction,tc_voltage);
     
     tc_temperature2 = tc_temp(coldjunction,tc_voltage2);
+    tc_temperature3 = tc_temp(coldjunction,tc_voltage3);
+    tc_temperature4 = tc_temp(coldjunction,tc_voltage4);
 
     output_f = p.update(tc_temperature);
     
@@ -354,6 +362,12 @@ void loop() {
         dbserver.println(text);
 
         snprintf(text,arraysize,"%s:%0.2f","firetemp",tc_temperature2);
+        dbserver.println(text);
+
+        snprintf(text,arraysize,"%s:%0.2f","tctemp3",tc_temperature3);
+        dbserver.println(text);
+
+        snprintf(text,arraysize,"%s:%0.2f","tctemp4",tc_temperature4);
         dbserver.println(text);
 
         snprintf(text,arraysize,"%s:%0.2f","output_pct",output * 100.0 / 255.0);
